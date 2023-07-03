@@ -1,0 +1,63 @@
+#form {
+    display: flex;
+    flex-direction: column;
+    min-height: 80vh;
+    -webkit-box-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    align-items: center;
+}
+
+#register {
+    width: 446px;
+    height: 30px;
+    border-radius: 4px;
+    background-color: lightcoral;
+}
+
+#input {
+    height: 30px;
+
+}
+
+#a {
+    background-color: aliceblue;
+    width: 500px;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    border-radius: 7px;
+    justify-content: center;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+
+#welcome h1 {
+    color: lightcoral;
+}
+
+#up {
+    color: lightcoral;
+    cursor: pointer;
+}
+
+#up:hover {
+    text-decoration: underline;
+}
+
+.name {
+    display: flex;
+    gap: 6px;
+}
+
+* {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#error {
+    color: lightcoral;
+    float: right;
+}
+
+.hidden {
+    display: none;
+}
