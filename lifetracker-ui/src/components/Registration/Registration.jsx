@@ -1,35 +1,45 @@
 import Navbar from "../Navbar/Navbar";
 import "./Registration.css"
+import axios from 'axios';
+//import { isAuthenticated } from "../../constants";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import jwt_decode from 'jwt-decode';
+
 
 export default function Registration() {
-    const password = document.querySelector('.password');
-    const confirm = document.querySelector('.confirm');
-    const match = document.querySelector('#match');
-    const email = document.querySelector('#email');
-    const forEmail = document.querySelector('.for');
-
-    //For the Email address
-    const handleChange = () => {
-        if(forEmail.value.includes('@') === false) {
-            email.classList.remove('hidden');
-        } else {
-            email.classList.add('hidden');
-        }
-    }
-
-    //For the password confirmation
-    const handleOnChange = () => {
-        if(password.value != confirm.value) {
-            match.classList.remove('hidden');
-        } else {
-            match.classList.add('hidden');
-        }
-    }
+    const navigate = useNavigate();
+    const [firstName, setFirst] = useState('');
+    const [lastName, setLast] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     const onSubmit = async (event) => {
         event.preventDefault();
-    }
+        try {
+            const response = await axios.post("http://localhost:3001/register", {
+                password: password,
+                firstName: firstName,
+                lastName: lastName,
+                email: email
+            });
+            console.log(response.data);
+            const { token } = response.data;
 
+            // Store the token in local storage
+            localStorage.setItem('token', token);
+
+            // Decode the token to get user data if needed
+            const decodedToken = jwt_decode(token);
+            console.log(decodedToken);
+
+            localStorage.setItem('userId', response.data.user.id);
+
+            navigate('/activity/a');
+        } catch (err) {
+            console.log(err);
+        }
+    }
     return (
         <div>
             <Navbar/>
@@ -40,7 +50,7 @@ export default function Registration() {
                 <div id="a">
                     <form onSubmit={onSubmit}>
                         <div>
-                        <input id="input" onChange={handleChange} className="for" size={65} type='text' placeholder='Email'/>
+                        <input id="input" className="for" value={email} size={65} type='text' placeholder='Email' onChange={(e) => {setEmail(e.target.value)}}/>
                         </div>
                         <br/>
                         <div>
@@ -48,28 +58,18 @@ export default function Registration() {
                         </div>
                         <br/>
                         <div className="name">
-                        <input id="input" className="first" size={31} type='text' placeholder='First Name'/>
-                        <input id="input" className="last" size={31} type='text' placeholder='Last Name'/>
+                        <input id="input" className="first" value={firstName} size={31} type='text' placeholder='First Name' onChange={(e) => {setFirst(e.target.value)}}/>
+                        <input id="input" className="last" value={lastName} size={31} type='text' placeholder='Last Name' onChange={(e) => {setLast(e.target.value)}}/>
                         </div>
                         <br/>
                         <div>
-                        <input id="input" className="password" size={65} type='text' placeholder='Password'/>
+                        <input id="input" className="password" size={65} type='password' placeholder='Password'/>
                         </div>
                         <br/>
                         <div>
-                        <input id="input" className="confirm" onChange={handleOnChange} size={65} type='text' placeholder='Confirm Password'/>
+                        <input id="input" value={password} className="confirm" size={65} type='password' placeholder='Confirm Password' onChange={(e) => {setPassword(e.target.value)}}/>
                         </div>
                         <br/>
-                        <div id="match" className="hidden">
-                        <label id="error">Passwords Do Not Match</label>
-                        <br/>
-                        <br/>
-                        </div>
-                        <div id="email" className="hidden">
-                        <label id="error">This is not an email address</label>
-                        <br/>
-                        <br/>
-                        </div>
                         <button id="register" type="submit"> Register</button>
                     </form>
                 </div>

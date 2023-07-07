@@ -2,7 +2,8 @@ import './ActivityPage.css'
 import Navbar from '../Navbar/Navbar'
 
 export default function ActivityPage() {
-    return(
+
+    return (
         <div>
             <Navbar/>
             <div id="content">

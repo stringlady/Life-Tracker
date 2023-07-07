@@ -9,3 +9,11 @@
 #content {
     padding-top: 50px;
 }
+
+#hidden {
+    display: none;
+}
+
+.hidden {
+    display: none;
+}

@@ -37,7 +37,7 @@ class User {
     const { email, password } = creds
     const requiredCreds = ["email", "password"]
     try {
-      validateFields({ required: requiredCreds, obj: creds, location: "user authentication" })
+      validateFields({ required: requiredCreds, obj: creds})
     } catch (err) {
       throw err
     }
@@ -65,6 +65,7 @@ class User {
 
   static async register(creds) {
     const { email, password, firstName, lastName} = creds
+    console.log(creds)
     const requiredCreds = ["email", "password", "firstName", "lastName"]
     try {
       validateFields({ required: requiredCreds, obj: creds })
@@ -87,11 +88,12 @@ class User {
           last_name,
           email
         )
-        VALUES ($1, $2, $3, $4, $5, $6)
-        RETURNING id,
+        VALUES ($1, $2, $3, $4)
+        RETURNING password,
                   email,            
                   first_name AS "firstName", 
-                  last_name AS "lastName"
+                  last_name AS "lastName",
+                  id
                   `,
       [hashedPassword, firstName, lastName, normalizedEmail]
     )
@@ -146,6 +148,7 @@ class User {
 
     return user
   }
+
 }
 
 module.exports = User

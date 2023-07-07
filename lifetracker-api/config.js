@@ -6,6 +6,8 @@ require("colors")
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3001
 const IS_TESTING = process.env.NODE_ENV === "test"
 
+const jwtSecret = process.env.SECRET_KEY || 'your_secret_key'
+
 // Use dev database, testing database, or via env var, production database
 function getDatabaseUri() {
   const dbUser = process.env.DATABASE_USER || "postgres"
@@ -32,4 +34,5 @@ module.exports = {
   IS_TESTING,
   BCRYPT_WORK_FACTOR,
   getDatabaseUri,
+  jwtSecret
 }
