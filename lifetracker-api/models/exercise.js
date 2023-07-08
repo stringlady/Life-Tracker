@@ -7,8 +7,8 @@ const { validateFields } = require("../utils/validate")
 
 class Exercise {
     static async add(creds) {
-        const {userId, name, hours} = creds;
-        const requiredCreds = ['userId', 'name', 'hours']
+        const {userId, name, duration, intensity} = creds;
+        const requiredCreds = ['userId', 'name', 'duration', 'intensity']
 
         try {
             validateFields({ required: requiredCreds, obj: creds })
@@ -21,19 +21,21 @@ class Exercise {
             `INSERT INTO exercise (
                 userid,
                 name, 
-                hours 
+                duration,
+                intensity 
             ) 
-            VALUES ($1, $2, $3) 
+            VALUES ($1, $2, $3, $4) 
             RETURNING 
                       userid,
                       name, 
-                      hours, 
+                      duration,
+                      intensity, 
                       createdat
                       `,
-            [userId, name, hours]
+            [userId, name, duration, intensity]
         )
 
-        const exercise = result.rows;
+        const exercise = result.rows[0];
 
         return exercise;
     }
@@ -43,7 +45,8 @@ class Exercise {
             `SELECT exerciseid,
                     userid,
                     name,
-                    hours,
+                    duration,
+                    intensity,
                     createdat
                 FROM exercise
                 WHERE exerciseid = $1`,
@@ -59,7 +62,8 @@ class Exercise {
             `SELECT exerciseid,
                     userid,
                     name,
-                    hours,
+                    duration,
+                    intensity,
                     createdAt
                 FROM exercise
                 WHERE userid = $1`,

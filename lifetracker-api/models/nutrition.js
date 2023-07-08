@@ -35,7 +35,7 @@ class Nutrition {
             [userId, name, calories, category]
         )
 
-        const nutrition = result.rows;
+        const nutrition = result.rows[0];
 
         return nutrition;
     }
@@ -49,22 +49,11 @@ class Nutrition {
                     category,
                     createdat
                 FROM nutrition
-                WHERE nutritionID = $1`,
+                WHERE nutritionid = $1`,
             [nutritionId]
         )
         const user = result.rows;
 
-        return user;
-    }
-
-    static async fetch() {
-        const result = await db.query(
-            `SELECT *
-                FROM nutrition`
-        )
-        
-        const user = result.rows;
-        
         return user;
     }
 
@@ -80,6 +69,7 @@ class Nutrition {
                 WHERE userid = $1`,
             [userId]
         )
+        //console.log(result.rows);
         const user = result.rows;
         
         return user;

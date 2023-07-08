@@ -7,8 +7,8 @@ const { validateFields } = require("../utils/validate")
 
 class Sleep {
     static async add(creds) {
-        const {userId, name, hours} = creds;
-        const requiredCreds = ['userId', 'name', 'hours']
+        const {userId, name, startTime, endTime} = creds;
+        const requiredCreds = ['userId', 'name', 'startTime', 'endTime']
 
         try {
             validateFields({ required: requiredCreds, obj: creds })
@@ -21,16 +21,18 @@ class Sleep {
             `INSERT INTO sleep (
                 userid,
                 name, 
-                hours 
+                starttime,
+                endtime 
             ) 
-            VALUES ($1, $2, $3) 
+            VALUES ($1, $2, $3, $4) 
             RETURNING 
                       userid,
                       name, 
-                      hours, 
+                      starttime,
+                      endtime, 
                       createdat
                       `,
-            [userId, name, hours]
+            [userId, name, startTime, endTime]
         )
 
         const nutrition = result.rows;
@@ -43,7 +45,8 @@ class Sleep {
             `SELECT sleepid,
                     userid,
                     name,
-                    hours,
+                    starttime,
+                    endtime,
                     createdat
                 FROM sleep
                 WHERE sleepid = $1`,
@@ -59,7 +62,8 @@ class Sleep {
             `SELECT sleepid,
                     userid,
                     name,
-                    hours,
+                    starttime,
+                    endtime,
                     createdat
                 FROM sleep
                 WHERE userid = $1`,

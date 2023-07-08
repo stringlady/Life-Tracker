@@ -9,7 +9,8 @@ export default function Exercise() {
     const btnclass = form ? 'hidden' : '';
     const fClass = form ? '' : 'hidden';
     const [name, setName] = useState('');
-    const [hours, setHours] = useState('');
+    const [duration, setDuration] = useState('');
+    const [intensity, setIntensity] = useState('');
     const [exercise, setExercise] = useState([]);
     const [fetching, setIsFetching] = useState(false);
     const [err, setError] = useState('');
@@ -21,7 +22,7 @@ export default function Exercise() {
           try {
             const res = await axios.get("http://localhost:3001/exercise/user/" + userId);
             if (res?.data.exercise) {
-              setExercise([res.data]);
+              setExercise(res.data.exercise);
             } else {
               setError("Error fetching products.");
             }
@@ -44,7 +45,13 @@ export default function Exercise() {
             const response = await axios.post('http://localhost:3001/exercise', {
                 userId: localStorage.getItem('userId'),
                 name: name,
-                hours: hours,
+                duration: duration,
+                intensity: intensity
+            })
+
+            const log = await axios.post('http://localhost:3001/activity/duration', {
+                userId: localStorage.getItem('userId'),
+                avgDur: duration
             })
             console.log(response.data);
             
@@ -75,7 +82,14 @@ export default function Exercise() {
                         </div>
                         <br/>
                         <div>
-                        <input id="input" size={65} value={hours} type='number' min={0}  placeholder='Hours' onChange={(e) => {setHours(e.target.value)}} />
+                        <input id="input" size={65} value={duration} type='number' min={0}  placeholder='Duration' onChange={(e) => {setDuration(e.target.value)}} />
+                        </div>
+                        <br/>
+                        <div>
+                            <label>Intensity</label>
+                            <br/>
+                            <br/>
+                        <input id="input" size={85} value={intensity} type='number' min={1} max={10}  onChange={(e) => {setIntensity(e.target.value)}} />
                         </div>
                         <br/>
                         <br/>
@@ -87,9 +101,9 @@ export default function Exercise() {
                 
         </div>
         <div id="cards">
-        {exercise[1]?.map((n, idx) => (
+        {exercise.map((n, idx) => (
                         <div id="card" key={idx}>
-                        <ExerciseCard name={n.name} hours={n.hours} date={n.createdat}/>
+                        <ExerciseCard name={n.name} intensity={n.intensity} duration={n.duration} date={n.createdat}/>
                         </div>
                     ))}
         </div>
@@ -97,12 +111,15 @@ export default function Exercise() {
     )
 }
 
-export function ExerciseCard({name, hours, date}) {
+export function ExerciseCard({name, duration, intensity, date}) {
+    const index = date.indexOf('T');
+    const newDate = date.substring(0, index);
     return (
         <div>
-            <p>{name}</p>
-            <p>{hours}</p>
-            <p>{date}</p>
+            <p>Name: {name}</p>
+            <p>Duration: {duration}</p>
+            <p>Intensity: {intensity}</p>
+            <p>Date: {newDate}</p>
         </div>
     )
 }

@@ -9,7 +9,8 @@ export default function Sleep() {
     const btnclass = form ? 'hidden' : '';
     const fClass = form ? '' : 'hidden';
     const [name, setName] = useState('');
-    const [hours, setHours] = useState('');
+    const [starttime, setstarttime] = useState('');
+    const [endtime, setendtime] = useState('');
     const [sleep, setSleep] = useState([]);
     const [fetching, setIsFetching] = useState(false);
     const [err, setError] = useState('');
@@ -18,11 +19,12 @@ export default function Sleep() {
         const userId = localStorage.getItem('userId');
         const authUser = async () => {
           setIsFetching(true);
+          console.log(endtime - starttime)
     
           try {
             const res = await axios.get("http://localhost:3001/sleep/user/" + userId);
             if (res?.data) {
-              setSleep([res.data])
+              setSleep(res.data.sleep)
             } else {
               setError("Error fetching products.");
             }
@@ -45,9 +47,16 @@ export default function Sleep() {
             const response = await axios.post('http://localhost:3001/sleep', {
                 userId: localStorage.getItem('userId'),
                 name: name,
-                hours: hours,
+                startTime: starttime,
+                endTime: endtime
             })
-            console.log(response.data);
+
+            const log = await axios.post('http://localhost:3001/activity/hours', {
+                userId: localStorage.getItem('userId'),
+                avgHours: Math.abs(endtime - starttime)
+            })
+
+            
             
             const newSleep = [...sleep, response.data.sleep]
             setSleep(newSleep)
@@ -76,7 +85,12 @@ export default function Sleep() {
                         </div>
                         <br/>
                         <div>
-                        <input id="input" size={65} value={hours} type='number' min={0}  placeholder='hours' onChange={(e) => {setHours(e.target.value)}} />
+                        <input id="input" size={65} value={starttime} type='time' placeholder='Start Time' onChange={(e) => {setstarttime(e.target.value)}} />
+                        </div>
+                        <br/>
+                        <br/>
+                        <div>
+                        <input id="input" size={65} value={endtime} type='time' placeholder='End Time' onChange={(e) => {setendtime(e.target.value)}} />
                         </div>
                         <br/>
                         <br/>
@@ -88,9 +102,9 @@ export default function Sleep() {
                 
         </div>
         <div id="cards">
-        {sleep[1]?.map((n, idx) => (
+        {sleep.map((n, idx) => (
                         <div id="card" key={idx}>
-                        <SleepCard name={n.name} hours={n.hours} date={n.createdat}/>
+                        <SleepCard name={n.name} endtime={n.endtime} starttime={n.starttime} date={n.createdat}/>
                         </div>
                     ))}
         </div>
@@ -98,12 +112,15 @@ export default function Sleep() {
     )
 }
 
-export function SleepCard({name, hours, date}) {
+export function SleepCard({name, starttime, endtime, date}) {
+    const index = date.indexOf('T');
+    const newDate = date.substring(0, index);
     return (
         <div>
-            <p>{name}</p>
-            <p>{hours}</p>
-            <p>{date}</p>
+            <p>Name: {name}</p>
+            <p>Start Time: {starttime}</p>
+            <p>End Time: {endtime}</p>
+            <p>Date: {newDate}</p>
         </div>
     )
 }

@@ -19,12 +19,12 @@ export default function Nutrition() {
         const userId = localStorage.getItem('userId');
         const authUser = async () => {
           setIsFetching(true);
-    
+          
           try {
             const res = await axios.get("http://localhost:3001/nutrition/user/" + userId);
             if (res?.data) {
-              setNutrition([res.data]);
-              console.log(res.data);
+              setNutrition(res.data.nutrition);
+              console.log(res.data.nutrition);
             } else {
               setError("Error fetching products.");
             }
@@ -50,6 +50,12 @@ export default function Nutrition() {
                 "calories": calories,
                 "category": category
             })
+
+            const log = await axios.post('http://localhost:3001/activity/calories', {
+                "userId": localStorage.getItem('userId'),
+                'avgCals': calories
+            })
+
             const newNutrition = [...nutrition, response.data.nutrition]
             setNutrition(newNutrition)
         } 
@@ -102,7 +108,7 @@ export default function Nutrition() {
                 
         </div>
         <div id="cards">
-        {nutrition[1]?.map((n, idx) => (
+        {nutrition.map((n, idx) => (
                         <div id="card" key={idx}>
                         <NutrtionCard name={n.name} calories={n.calories} category={n.category} date={n.createdat}/>
                         </div>
@@ -113,12 +119,14 @@ export default function Nutrition() {
 }
 
 export function NutrtionCard({name, calories, category, date}) {
+    const index = date.indexOf('T');
+    const newDate = date.substring(0, index);
     return (
         <div>
-            <p>{name}</p>
-            <p>{calories}</p>
-            <p>{category}</p>
-            <p>{date}</p>
+            <p>Name: {name}</p>
+            <p>Calories: {calories}</p>
+            <p>Category: {category}</p>
+            <p>Date: {newDate}</p>
         </div>
     )
 }

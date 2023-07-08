@@ -9,6 +9,7 @@ const User = require("./models/user")
 const Nutrition = require('./models/nutrition');
 const Sleep = require('./models/sleep');
 const Exercise = require('./models/exercise');
+const Activity = require('./models/activity');
 
 const { NotFoundError } = require("./utils/errors");
 const config = require("./config");
@@ -68,16 +69,16 @@ app.post("/nutrition", async function (req, res, next) {
   }
 })
 
-app.get("/nutrition/:nutritionId", function (req, res) {
+app.get("/nutrition/:nutritionId", async function (req, res) {
   const nutritionId = req.params.nutritionId;
-  const nutrition = Nutrition.fetchByNutritionId(nutritionId);
-  return res.status(200).json({ nutrition })
+  const nutrition = await Nutrition.fetchByNutritionId(nutritionId);
+  return res.status(200).json({ nutrition : nutrition })
 })
 
-app.get("/nutrition/user/:userId", function (req, res) {
+app.get("/nutrition/user/:userId", async function (req, res) {
   const userId = req.params.userId;
-  const nutrition = Nutrition.fetchByUserId(userId);
-  return res.status(200).json({ nutrition })
+  const nutrition = await Nutrition.fetchByUserId(userId);
+  return res.status(200).json( { nutrition : nutrition } )
 })
 
 app.post("/sleep", async function (req, res, next) {
@@ -89,16 +90,16 @@ app.post("/sleep", async function (req, res, next) {
   }
 })
 
-app.get("/sleep/:sleepId", function (req, res) {
+app.get("/sleep/:sleepId", async function (req, res) {
   const sleepId = req.params.sleepId;
-  const sleep = Sleep.fetchBySleepId(sleepId);
-  return res.status(200).json({ sleep })
+  const sleep = await Sleep.fetchBySleepId(sleepId);
+  return res.status(200).json({ sleep: sleep })
 })
 
-app.get("/sleep/user/:userId", function (req, res) {
+app.get("/sleep/user/:userId", async function (req, res) {
   const userId = req.params.userId;
-  const sleep = Sleep.fetchByUserId(userId);
-  return res.status(200).json({ sleep })
+  const sleep = await Sleep.fetchByUserId(userId);
+  return res.status(200).json({ sleep: sleep })
 })
 
 app.post("/exercise", async function (req, res, next) {
@@ -110,16 +111,61 @@ app.post("/exercise", async function (req, res, next) {
   }
 })
 
-app.get("/exercise/:exerciseId", function (req, res) {
+app.get("/exercise/:exerciseId", async function (req, res) {
   const exerciseId = req.params.exerciseId;
-  const exercise = Exercise.fetchByExerciseId(exerciseId);
-  return res.status(200).json({ exercise })
+  const exercise = await Exercise.fetchByExerciseId(exerciseId);
+  return res.status(200).json({ exercise: exercise })
 })
 
-app.get("/exercise/user/:userId", function (req, res) {
+app.get("/exercise/user/:userId", async function (req, res) {
   const userId = req.params.userId;
-  const exercise = Exercise.fetchByUserId(userId);
-  return res.status(200).json({ exercise })
+  const exercise = await Exercise.fetchByUserId(userId);
+  return res.status(200).json({ exercise: exercise })
+})
+
+app.post("/activity/calories", async function (req, res, next) {
+  try {
+    const cals = await Activity.addCals(req.body);
+    return res.status(201).json({ cals })
+  } catch (err) {
+    next(err)
+  }
+})
+
+app.get("/activity/calories/:userId", async function (req, res) {
+  const userId = req.params.userId;
+  const avg = await Activity.fetchAvgCals(userId);
+  return res.status(200).json({ avg: avg })
+})
+
+app.post("/activity/duration", async function (req, res, next) {
+  try {
+    const duration = await Activity.addDur(req.body);
+    return res.status(201).json({ duration })
+  } catch (err) {
+    next(err)
+  }
+})
+
+app.get("/activity/duration/:userId", async function (req, res) {
+  const userId = req.params.userId;
+  const avg = await Activity.fetchAvgDur(userId);
+  return res.status(200).json({ avg: avg })
+})
+
+app.post("/activity/hours", async function (req, res, next) {
+  try {
+    const hours = await Activity.addHours(req.body);
+    return res.status(201).json({ hours })
+  } catch (err) {
+    next(err)
+  }
+})
+
+app.get("/activity/hours/:userId", async function (req, res) {
+  const userId = req.params.userId;
+  const avg = await Activity.fetchAvgHours(userId);
+  return res.status(200).json({ avg: avg })
 })
 
 // health check
