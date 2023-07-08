@@ -17,10 +17,8 @@ function getDatabaseUri() {
   const dbTestName = process.env.DATABASE_TEST_NAME || "lifetracker_test"
   const dbProdName = process.env.DATABASE_NAME || "lifetracker"
   const dbName = process.env.NODE_ENV === "test" ? dbTestName : dbProdName
-  const DATABASE_HOSTED = process.env.DATABASE_URL 
 
-  return DATABASE_HOSTED
-  //|| `postgresql://${dbUser}:${dbPass}@${dbHost}:${dbPort}/${dbName}`
+  return process.env.DATABASE_URL || `postgresql://${dbUser}:${dbPass}@${dbHost}:${dbPort}/${dbName}`
 }
 
 const BCRYPT_WORK_FACTOR = IS_TESTING ? 1 : 13
